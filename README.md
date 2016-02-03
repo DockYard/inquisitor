@@ -15,7 +15,7 @@ defmodule MyApp.PostController do
   def index(conn, params) do
     events =
       build_event_query(params)
-      Repo.all()
+      |> Repo.all()
 
     json(conn, events)
   end
@@ -52,7 +52,7 @@ defmodule MyApp.PostsController do
   def index(conn, params) do
     events =
       build_event_query(params)
-      Repo.all()
+      |> Repo.all()
 
     json(conn, events)
   end
@@ -62,6 +62,7 @@ defmodule MyApp.PostsController do
     |> where([p], p.inserted_at >= ^date)
     |> build_user_query(tail)
   end
+end
 ```
 
 The query is built recursively by iterating over all the params. If
