@@ -26,7 +26,7 @@ defmodule Inquisitor.Mixfile do
   end
 
   def package do
-    [contributors: ["Brian Cardarella"],
+    [maintainers: ["Brian Cardarella"],
      licenses: ["MIT"],
      links: %{"GitHub" => "https://github.com/dockyard/inquisitor"}]
   end
