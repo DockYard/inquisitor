@@ -22,7 +22,7 @@ defmodule MyApp.PostController do
 end
 ```
 
-After `use Inquisitor, with: MyApp.Post` a cutom function is added to
+After `use Inquisitor, with: MyApp.Post` a custom function is added to
 the `MyApp.PostController`. In this case that function is
 `build_event_query`. The name of the function is dynamically created
 based upon the model name. So if the model was `MyApp.FooBarBaz` the
