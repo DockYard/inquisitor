@@ -19,6 +19,7 @@ defmodule MyApp.PostController do
 
     json(conn, events)
   end
+end
 ```
 
 After `use Inquisitor, with: MyApp.Post` a cutom function is added to
