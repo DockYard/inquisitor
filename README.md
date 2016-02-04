@@ -103,7 +103,7 @@ There are a few built in handlers
 #### Booleans ####
 
 Booleans that come in as text will be typecast to an actual boolean
-type then past on for handling. So even if the params come as:
+type then passed on for handling. So even if the params come as:
 
 ```elixir
 %{ "foo" => "true" }
