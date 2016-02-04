@@ -38,6 +38,17 @@ SELECT p0."foo", p0."baz" FROM posts as p0 WHERE (p0."foo" = $1) AND (p0."baz" =
 
 `$1` and `$2` will get the values of `"bar"` and `"qux"`,
 
+### Security ###
+
+Inquisitor will allow any key/value pair to be queried against, you will
+likely want to only allow access to a limited number of fields. To do
+this you can `whitelist` any number of fields that can be allowed to
+queried:
+
+```elixir
+use Inquisitor, with: MyApp.Post, whitelist: ["title", "body"]
+```
+
 ### Adding custom query handlers ###
 
 Simple key/value matching is not always what you want. In that case you

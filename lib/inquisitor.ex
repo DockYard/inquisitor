@@ -1,13 +1,15 @@
 defmodule Inquisitor do
-  defmacro __using__([with: model]) do
+  defmacro __using__(opts) do
     quote do
-      @__inquisitor__model__ unquote(model)
+      @__inquisitor__model__ unquote(opts[:with])
+      @__inquisitor__whitelist__ unquote(opts[:whitelist])
       @before_compile Inquisitor
     end
   end
 
   defmacro __before_compile__(env) do
     model = Module.get_attribute(env.module, :__inquisitor__model__)
+    whitelist = Module.get_attribute(env.module, :__inquisitor__whitelist__)
     name =
       model
       |> Code.eval_quoted()
@@ -22,12 +24,12 @@ defmodule Inquisitor do
       |> String.to_atom
 
     quote do
-      defp unquote(name)(params) do
+      def unquote(name)(params) do
         query = unquote(model)
         list =
           params
-          |> Map.delete("format")
           |> Map.to_list()
+          |> Inquisitor.whitelist_filter(unquote(whitelist))
           |> Inquisitor.preprocess()
         unquote(name)(query, list)
       end
@@ -38,6 +40,7 @@ defmodule Inquisitor do
         |> where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
         |> unquote(name)(tail)
       end
+
     end
   end
 
@@ -48,4 +51,9 @@ defmodule Inquisitor do
   end
   def preprocess([{attr, value}|tail]),
     do: [{attr, value} | preprocess(tail)]
+
+  def whitelist_filter(params, nil), do: params
+  def whitelist_filter(params, whitelist) do
+    Enum.filter(params, &Enum.member?(whitelist, elem(&1, 0)))
+  end
 end
