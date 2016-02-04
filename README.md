@@ -13,18 +13,18 @@ defmodule MyApp.PostController do
   use Inquisitor, with: MyApp.Post
 
   def index(conn, params) do
-    events =
-      build_event_query(params)
+    posts =
+      build_post_query(params)
       |> Repo.all()
 
-    json(conn, events)
+    json(conn, posts)
   end
 end
 ```
 
 After `use Inquisitor, with: MyApp.Post` a custom function is added to
 the `MyApp.PostController`. In this case that function is
-`build_event_query`. The name of the function is dynamically created
+`build_post_query`. The name of the function is dynamically created
 based upon the model name. So if the model was `MyApp.FooBarBaz` the
 corresponding function would be `build_foo_bar_baz_query`.
 
@@ -50,17 +50,17 @@ defmodule MyApp.PostsController do
   use Inquisitor, with: MyApp.Post
 
   def index(conn, params) do
-    events =
-      build_event_query(params)
+    post =
+      build_post_query(params)
       |> Repo.all()
 
-    json(conn, events)
+    json(conn, posts)
   end
 
-  def build_event_query(query, [{"inserted_at", date}|tail]) do
+  def build_post_query(query, [{"inserted_at", date}|tail]) do
     query
     |> where([p], p.inserted_at >= ^date)
-    |> build_user_query(tail)
+    |> build_post_query(tail)
   end
 end
 ```
