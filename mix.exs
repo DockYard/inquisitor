@@ -43,6 +43,8 @@ defmodule Inquisitor.Mixfile do
   defp deps do
     [
       {:ecto, "~> 1.0"},
+      {:earmark, "~> 0.1", only: :dev},
+      {:ex_doc, "~> 0.11", only: :dev},
       {:postgrex, "> 0.0.0", only: :test}
     ]
   end
