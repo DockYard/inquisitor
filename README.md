@@ -1,10 +1,10 @@
-# Inquisitor #
+# Inquisitor
 
 Easily build composable queries for Ecto.
 
 [![Build Status](https://secure.travis-ci.org/dockyard/inquisitor.svg?branch=master)](http://travis-ci.org/dockyard/inquisitor)
 
-## Usage ##
+## Usage
 
 Adding Inquisitor to a project is simple:
 
@@ -38,7 +38,7 @@ SELECT p0."foo", p0."baz" FROM posts as p0 WHERE (p0."foo" = $1) AND (p0."baz" =
 
 `$1` and `$2` will get the values of `"bar"` and `"qux"`,
 
-### Security ###
+### Security
 
 Inquisitor will allow any key/value pair to be queried against, you will
 likely want to only allow access to a limited number of fields. To do
@@ -49,7 +49,7 @@ queried:
 use Inquisitor, with: MyApp.Post, whitelist: ["title", "body"]
 ```
 
-### Adding custom query handlers ###
+### Adding custom query handlers
 
 Simple key/value matching is not always what you want. In that case you
 can define custom handlers for certain keys. Let's say you want to query
@@ -80,7 +80,7 @@ The query is built recursively by iterating over all the params. If
 there is a matching custom handler, it uses that otherwise defaults to
 the key/value handler.
 
-### Handing fields that don't exist on the model ###
+### Handing fields that don't exist on the model
 
 The keys you query against don't need to exist on the model. Revisting
 the date example, let's say we want to find all posts inserted for a
@@ -96,11 +96,11 @@ end
 
 That's it!
 
-### Built in handlers ###
+### Built in handlers
 
 There are a few built in handlers
 
-#### Booleans ####
+#### Booleans
 
 Booleans that come in as text will be typecast to an actual boolean
 type then passed on for handling. So even if the params come as:
@@ -116,23 +116,23 @@ def build_event_query(query, [{"foo", true}|tail]) do
   ...
 ```
 
-## Authors ##
+## Authors
 
 * [Brian Cardarella](http://twitter.com/bcardarella)
 
 [We are very thankful for the many contributors](https://github.com/dockyard/inquisitor/graphs/contributors)
 
-## Versioning ##
+## Versioning
 
 This library follows [Semantic Versioning](http://semver.org)
 
-## Want to help? ##
+## Want to help?
 
 Please do! We are always looking to improve this library. Please see our
 [Contribution Guidelines](https://github.com/dockyard/inquisitor/blob/master/CONTRIBUTING.md)
 on how to properly submit issues and pull requests.
 
-## Legal ##
+## Legal
 
 [DockYard](http://dockyard.com/), Inc. &copy; 2016
 
