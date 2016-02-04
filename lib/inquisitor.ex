@@ -86,14 +86,13 @@ defmodule Inquisitor do
     end
   end
 
-  def preprocess([]), do: []
-  def preprocess([{attr, value}|tail]) when value == "true" or value == "false" do
-    Ecto.Type.cast(:boolean, value)
-    |> elem(1)
-    |> (&preprocess([{attr, &1} | tail])).()
+  def preprocess(list) do
+    Enum.map list, fn
+      {attr, "true"} -> {attr, true}
+      {attr, "false"} -> {attr, false}
+      attr_value -> attr_value
+    end
   end
-  def preprocess([{attr, value}|tail]),
-    do: [{attr, value} | preprocess(tail)]
 
   def whitelist_filter(params, nil), do: Map.to_list(params)
   def whitelist_filter(params, whitelist) do
