@@ -61,7 +61,7 @@ defmodule MyApp.PostsController do
   use Inquisitor, with: MyApp.Post
 
   def index(conn, params) do
-    post =
+    posts =
       build_post_query(params)
       |> Repo.all()
 
