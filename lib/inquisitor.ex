@@ -72,7 +72,6 @@ defmodule Inquisitor do
       def unquote(fn_name)(params) do
         list =
           params
-          |> Map.to_list()
           |> Inquisitor.whitelist_filter(unquote(whitelist))
           |> Inquisitor.preprocess()
         unquote(fn_name)(unquote(model), list)
@@ -96,17 +95,13 @@ defmodule Inquisitor do
   def preprocess([{attr, value}|tail]),
     do: [{attr, value} | preprocess(tail)]
 
-  def whitelist_filter(params, nil), do: params
+  def whitelist_filter(params, nil), do: Map.to_list(params)
   def whitelist_filter(params, whitelist) do
     Enum.filter(params, &Enum.member?(whitelist, elem(&1, 0)))
   end
 
   defp name_from_model(model) do
-    model
-    |> Code.eval_quoted()
-    |> elem(0)
-    |> inspect()
-    |> String.split(".")
+    Module.split(model)
     |> List.last()
     |> Mix.Utils.underscore()
   end
