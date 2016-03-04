@@ -5,7 +5,7 @@ defmodule InquisitorTest do
     use Inquisitor, with: User
     import Ecto.Query, only: [from: 1, from: 2]
 
-    def build_user_query(query, [{"limit", limit}|t]) do
+    defp build_user_query(query, [{"limit", limit}|t]) do
       query
       |> Ecto.Query.limit(^limit)
       |> build_user_query(t) 
