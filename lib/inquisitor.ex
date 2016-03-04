@@ -80,7 +80,7 @@ defmodule Inquisitor do
       def unquote(fn_name)(query, []), do: query
       def unquote(fn_name)(query, [{attr, value}|tail]) do
         query
-        |> where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
+        |> Ecto.Query.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
         |> unquote(fn_name)(tail)
       end
     end
