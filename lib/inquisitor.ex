@@ -46,7 +46,7 @@ defmodule Inquisitor do
   the query can be overriden for each key. You can pattern match on the
   key name to override:
 
-      def build_post_query(query, [{"title", title}|tail]) do
+      defp build_post_query(query, [{"title", title}|tail]) do
         new_query = # your custom query
         build_post_query(new_query, tail)
       end
@@ -77,8 +77,8 @@ defmodule Inquisitor do
         unquote(fn_name)(unquote(model), list)
       end
 
-      def unquote(fn_name)(query, []), do: query
-      def unquote(fn_name)(query, [{attr, value}|tail]) do
+      defp unquote(fn_name)(query, []), do: query
+      defp unquote(fn_name)(query, [{attr, value}|tail]) do
         query
         |> Ecto.Query.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
         |> unquote(fn_name)(tail)

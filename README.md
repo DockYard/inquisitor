@@ -68,9 +68,9 @@ defmodule MyApp.PostsController do
     json(conn, posts)
   end
 
-  def build_post_query(query, [{"inserted_at", date}|tail]) do
+  defp build_post_query(query, [{"inserted_at", date}|tail]) do
     query
-    |> where([p], p.inserted_at >= ^date)
+    |> Ecto.Query.where([p], p.inserted_at >= ^date)
     |> build_post_query(tail)
   end
 end
@@ -87,10 +87,10 @@ the date example, let's say we want to find all posts inserted for a
 given month and year:
 
 ```elixir
-def build_event_query(query, [{attr, value}|tail]) when attr == "month" or attr == "year" do
+defp build_event_query(query, [{attr, value}|tail]) when attr == "month" or attr == "year" do
   query
-  |> where(fragment("date_part(?, ?) = ?", ^attr, e.inserted_at, type(^value, :integer)))
-  |> build_event_query(q, tail)
+  |> Ecto.Query.where([e], fragment("date_part(?, ?) = ?", ^attr, e.inserted_at, type(^value, :integer)))
+  |> build_event_query(tail)
 end
 ```
 
@@ -112,7 +112,7 @@ type then passed on for handling. So even if the params come as:
 You will want to pattern match on the actual boolean value:
 
 ```elixir
-def build_event_query(query, [{"foo", true}|tail]) do
+defp build_event_query(query, [{"foo", true}|tail]) do
   ...
 ```
 
