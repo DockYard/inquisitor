@@ -86,6 +86,7 @@ defmodule Inquisitor do
     end
   end
 
+  @doc false
   def preprocess(list) do
     Enum.map list, fn
       {attr, "true"} -> {attr, true}
@@ -94,6 +95,7 @@ defmodule Inquisitor do
     end
   end
 
+  @doc false
   def whitelist_filter(params, nil), do: Map.to_list(params)
   def whitelist_filter(params, whitelist) do
     Enum.filter(params, &Enum.member?(whitelist, elem(&1, 0)))
