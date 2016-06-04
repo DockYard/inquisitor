@@ -5,10 +5,10 @@ defmodule InquisitorTest do
     use Inquisitor, with: User
     import Ecto.Query, only: [from: 1, from: 2]
 
-    defp build_user_query(query, [{"limit", limit}|t]) do
+    defp build_user_query(query, [{"order_by", field} | tail]) do
       query
-      |> Ecto.Query.limit(^limit)
-      |> build_user_query(t) 
+      |> Ecto.Query.order_by([asc: ^String.to_existing_atom(field)])
+      |> build_user_query(tail)
     end
   end
 
@@ -37,8 +37,16 @@ defmodule InquisitorTest do
   end
 
   test "can use custom composable query" do
+    q = Basic.build_user_query(%{"order_by" => "name"})
+    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age", u0."verified" FROM "users" AS u0 ORDER BY u0."name"}, []}
+  end
+
+  test "will limit results" do
     q = Basic.build_user_query(%{"limit" => 20})
     assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age", u0."verified" FROM "users" AS u0 LIMIT $1}, [20]}
+
+    q = Basic.build_user_query(%{"limit" => "5"})
+    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age", u0."verified" FROM "users" AS u0 LIMIT $1}, [5]}
   end
 
   defmodule Whitelist do

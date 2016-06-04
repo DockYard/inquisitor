@@ -116,6 +116,16 @@ defp build_event_query(query, [{"foo", true}|tail]) do
   ...
 ```
 
+#### Limit
+
+Self explanatory.  Given the params:
+
+```elixir
+%{ "limit" => "20" }
+```
+
+Results will be limited to 20 items.
+
 ## Authors
 
 * [Brian Cardarella](http://twitter.com/bcardarella)
