@@ -2,7 +2,7 @@
 
 Easily build composable queries for Ecto.
 
-[![Build Status](https://secure.travis-ci.org/dockyard/inquisitor.svg?branch=master)](http://travis-ci.org/dockyard/inquisitor)
+[![Build Status](https://secure.travis-ci.org/DockYard/inquisitor.svg?branch=master)](http://travis-ci.org/DockYard/inquisitor)
 
 ## Usage
 
