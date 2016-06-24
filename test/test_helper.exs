@@ -20,8 +20,8 @@ defmodule Inquisitor.Integration.Case do
   end
 end
 
-_ = Ecto.Storage.down(Repo)
-:ok = Ecto.Storage.up(Repo)
+_ = Repo.__adapter__.storage_down(Repo.config)
+:ok = Repo.__adapter__.storage_up(Repo.config)
 
 {:ok, _pid} = Repo.start_link
 :ok = Ecto.Migrator.up(Repo, 0, Inquisitor.Test.Migrations, log: false)
