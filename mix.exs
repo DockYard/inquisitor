@@ -45,7 +45,7 @@ defmodule Inquisitor.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ecto, "~> 1.0"},
+      {:ecto, "> 2.0.0"},
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:postgrex, "> 0.0.0", only: :test}
