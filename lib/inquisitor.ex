@@ -78,6 +78,11 @@ defmodule Inquisitor do
       end
 
       defp unquote(fn_name)(query, []), do: query
+      defp unquote(fn_name)(query, [{"limit", value}|tail]) do
+        query
+        |> Ecto.Query.limit(^value)
+        |> unquote(fn_name)(tail)
+      end
       defp unquote(fn_name)(query, [{attr, value}|tail]) do
         query
         |> Ecto.Query.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
