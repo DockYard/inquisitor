@@ -3,7 +3,7 @@ defmodule InquisitorTest do
 
   defmodule Basic do
     use Inquisitor, with: User
-    import Ecto.Query, only: [from: 1, from: 2]
+    require Ecto.Query
 
     defp build_user_query(query, [{"order_by", field} | tail]) do
       query
@@ -50,8 +50,8 @@ defmodule InquisitorTest do
   end
 
   defmodule Whitelist do
-    import Ecto.Query
     use Inquisitor, with: User, whitelist: ["name"]
+    require Ecto.Query
   end
 
   test "allows whitelisted fields to be queried" do
