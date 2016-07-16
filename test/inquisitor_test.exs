@@ -50,8 +50,8 @@ defmodule InquisitorTest do
   end
 
   defmodule Whitelist do
-    use Inquisitor, with: User, whitelist: ["name"]
     import Ecto.Query
+    use Inquisitor, with: User, whitelist: ["name"]
   end
 
   test "allows whitelisted fields to be queried" do
