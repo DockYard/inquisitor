@@ -109,6 +109,6 @@ defmodule Inquisitor do
   defp name_from_model(model) do
     Module.split(model)
     |> List.last()
-    |> Mix.Utils.underscore()
+    |> Macro.underscore()
   end
 end
