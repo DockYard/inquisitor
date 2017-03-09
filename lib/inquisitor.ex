@@ -1,5 +1,4 @@
 defmodule Inquisitor do
-  @fn_attr :inquisitor_fn_name
   @moduledoc """
   Composable query builder for Ecto.
 
@@ -54,36 +53,30 @@ defmodule Inquisitor do
   and avoid the macro you are free to do so.
   """
   defmacro __using__(_opts) do
-    Module.put_attribute(__CALLER__.module, @fn_attr, :build_query)
-
     quote do
       import Inquisitor
       @before_compile Inquisitor
     end
   end
 
-  defmacro __before_compile__(env) do
-    fn_name = Module.get_attribute(env.module, @fn_attr)
-
+  defmacro __before_compile__(_env) do
     quote do
-      def unquote(fn_name)(query, params) when is_map(params) do
+      def build_query(query, params) when is_map(params) do
         params = Map.to_list(params)
 
-        unquote(fn_name)(query, params)
+        build_query(query, params)
       end
 
-      def unquote(fn_name)(query, []), do: query
-      def unquote(fn_name)(query, [{_attr, _value}|tail]) do
-        unquote(fn_name)(query, tail)
+      def build_query(query, []), do: query
+      def build_query(query, [{_attr, _value}|tail]) do
+        build_query(query, tail)
       end
 
-      defoverridable [{unquote(fn_name), 2}]
+      defoverridable [build_query: 2]
     end
   end
 
   defmacro defquery(key, value, [do: do_expr]) do
-    fn_name = Module.get_attribute(__CALLER__.module, @fn_attr)
-
     do_expr = Macro.prewalk(do_expr, fn
       {:query, meta, nil} -> {:query, meta, __MODULE__}
       node -> node
@@ -95,9 +88,9 @@ defmodule Inquisitor do
     end
 
     quote do
-      def unquote(fn_name)(query, [{unquote(key), unquote(value)} | tail]) when unquote(when_expr) do
+      def build_query(query, [{unquote(key), unquote(value)} | tail]) when unquote(when_expr) do
         unquote(do_expr)
-        |> unquote(fn_name)(tail)
+        |> build_query(tail)
       end
     end
   end
