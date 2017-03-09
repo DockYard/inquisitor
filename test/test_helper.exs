@@ -1,7 +1,7 @@
 Logger.configure(level: :info)
 ExUnit.start()
 
-Code.require_file "./support/models.exs", __DIR__
+Code.require_file "./support/schemas.exs", __DIR__
 Code.require_file "./support/repo.exs", __DIR__
 Code.require_file "./support/migrations.exs", __DIR__
 

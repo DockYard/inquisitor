@@ -1,4 +1,5 @@
 defmodule Inquisitor do
+  @fn_attr :inquisitor_fn_name
   @moduledoc """
   Composable query builder for Ecto.
 
@@ -6,16 +7,12 @@ defmodule Inquisitor do
   from a very simple pattern.
 
       defmodule App.PostController do
-        use Inquisitor, with: App.Post
+        use Inquisitor
       end
 
   This will inject the necessary code into the `App.PostController`
-  module. The function name depends upon the model name. In this case
-  the function injected will be called `build_post_query/1`. If the
-  model name was `App.FooBarBaz` the corresponding function name would
-  be `build_foo_bar_baz/1`. The last segment of the module name is
-  always used, ignoring all other namespacing. A model named
-  `Foo.Bar.Baz` would inject a function named `build_baz_query/1`.
+  module. The function name depends upon the schema name. In this case
+  the function injected will be called `build_query/1`.
 
   The builder function expects a flat map of key/value pairs to be
   passed in. Typically this might be captured from an incoming request.
@@ -25,90 +22,83 @@ defmodule Inquisitor do
 
       def index(conn, params) do
         posts =
-          build_post_query(params)
+          build_query(params)
           |> Repo.all()
 
         json(conn, posts)
       end
 
-  ## Options
-
-  * `with` - the model used for the query builder
-  * `whitelist` - a list of allowable fields that can be queried,
-  if this option is defined any fields not included will be ignored
-  during the query builder. If this option is omitted all fields will be
-  queried.
-
   ## Writing custom query handlers
 
-  The key/value pairs are iterated over recursively as the query is
-  built up. A default handler that simply add `where(key = value)` to
-  the query can be overriden for each key. You can pattern match on the
-  key name to override:
+  Custom query handlers are written using `defquery/2`. This macro
+  has the `query` variable injected at compile-time so you can use it
+  to build up a new query. The result of the this macro should always
+  be the query. The first argument will be the param key to match on,
+  the second is the value matcher:
 
-      defp build_post_query(query, [{"title", title}|tail]) do
-        new_query = # your custom query
-        build_post_query(new_query, tail)
+      defquery "title", title do
+        query
+        |> Ecto.Query.where([r], r.title == ^title)
       end
 
-  Ensure the new query and the tail of the params list is passed into
-  the query builder function to continue the iteration. However, if
-  you'd like to stop iteration just return the new query.
+  This macro will inject a new function at compile time. The above example
+  will produce:
+
+      def build_query(query, [{"title", title} | tail]) do
+        query
+        |> Ecto.Qiery.where([r], r.title == ^title)
+        |> build_query(tail)
+      end
+
+  The macro is there for convenience. If you'd like to just write the function
+  and avoid the macro you are free to do so.
   """
-  defmacro __using__(opts) do
+  defmacro __using__(_opts) do
+    Module.put_attribute(__CALLER__.module, @fn_attr, :build_query)
+
     quote do
-      @__inquisitor__model__ unquote(opts[:with])
-      @__inquisitor__whitelist__ unquote(opts[:whitelist])
+      import Inquisitor
       @before_compile Inquisitor
     end
   end
 
   defmacro __before_compile__(env) do
-    model     = Module.get_attribute(env.module, :__inquisitor__model__)
-    whitelist = Module.get_attribute(env.module, :__inquisitor__whitelist__)
-    fn_name   = :"build_#{name_from_model(model)}_query"
+    fn_name = Module.get_attribute(env.module, @fn_attr)
 
     quote do
-      def unquote(fn_name)(params) do
-        list =
-          params
-          |> Inquisitor.whitelist_filter(unquote(whitelist))
-          |> Inquisitor.preprocess()
-        unquote(fn_name)(unquote(model), list)
+      def unquote(fn_name)(query, params) when is_map(params) do
+        params = Map.to_list(params)
+
+        unquote(fn_name)(query, params)
       end
 
-      defp unquote(fn_name)(query, []), do: query
-      defp unquote(fn_name)(query, [{"limit", value}|tail]) do
-        query
-        |> Ecto.Query.limit(^value)
-        |> unquote(fn_name)(tail)
+      def unquote(fn_name)(query, []), do: query
+      def unquote(fn_name)(query, [{_attr, _value}|tail]) do
+        unquote(fn_name)(query, tail)
       end
-      defp unquote(fn_name)(query, [{attr, value}|tail]) do
-        query
-        |> Ecto.Query.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
-        |> unquote(fn_name)(tail)
-      end
+
+      defoverridable [{unquote(fn_name), 2}]
     end
   end
 
-  @doc false
-  def preprocess(list) do
-    Enum.map list, fn
-      {attr, "true"} -> {attr, true}
-      {attr, "false"} -> {attr, false}
-      attr_value -> attr_value
+  defmacro defquery(key, value, [do: do_expr]) do
+    fn_name = Module.get_attribute(__CALLER__.module, @fn_attr)
+
+    do_expr = Macro.prewalk(do_expr, fn
+      {:query, meta, nil} -> {:query, meta, __MODULE__}
+      node -> node
+    end)
+
+    [value, when_expr] = case value do
+      {:when, _meta, expr} -> expr
+      value -> [value, true]
     end
-  end
 
-  @doc false
-  def whitelist_filter(params, nil), do: Map.to_list(params)
-  def whitelist_filter(params, whitelist) do
-    Enum.filter(params, &Enum.member?(whitelist, elem(&1, 0)))
-  end
-
-  defp name_from_model(model) do
-    Module.split(model)
-    |> List.last()
-    |> Macro.underscore()
+    quote do
+      def unquote(fn_name)(query, [{unquote(key), unquote(value)} | tail]) when unquote(when_expr) do
+        unquote(do_expr)
+        |> unquote(fn_name)(tail)
+      end
+    end
   end
 end
