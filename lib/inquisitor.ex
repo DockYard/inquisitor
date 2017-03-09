@@ -76,6 +76,27 @@ defmodule Inquisitor do
     end
   end
 
+  Module.add_doc(__MODULE__, __ENV__.line + 2, :defmacro, {:defquery, 2}, (quote do: [field, value]), """
+  Define new query matcher
+
+  Query matcher macro, the `query` is automatically injected at compile-time for use in the block
+
+  Usage
+
+      defquery "name", name do
+        query
+        |> Ecto.Query.where([r], r.name == ^name)
+      end
+
+  You can also use guards with the macro:
+
+      defquery attr, value when attr == "month" or attr == "year" do
+        query
+        |> Ecto.Query.where([e], fragment("date_part(?, ?) = ?", ^attr, e.inserted_at, type(^value, :integer)))
+      end
+  """)
+
+  @doc false
   defmacro defquery(key, value, [do: do_expr]) do
     do_expr = Macro.prewalk(do_expr, fn
       {:query, meta, nil} -> {:query, meta, __MODULE__}
