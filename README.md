@@ -74,7 +74,7 @@ defmodule MyApp.PostsController do
     json(conn, posts)
   end
 
-  defquery "inserted_at, date do
+  defquery "inserted_at", date do
     query
     |> Ecto.Query.where([p], p.inserted_at >= ^date)
   end
