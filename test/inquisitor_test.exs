@@ -32,21 +32,21 @@ defmodule InquisitorTest do
 
   test "will build a simple key/value query" do
     q = Basic.build_query(User, %{"name" => "Brian"})
-    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age", u0."verified" FROM "users" AS u0 WHERE (u0."name" = $1)}, ["Brian"]}
+    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age" FROM "users" AS u0 WHERE (u0."name" = $1)}, ["Brian"]}
   end
 
   test "will combine multiple params with AND sql" do
     q = Basic.build_query(User, %{"name" => "Brian", "age" => 36})
-    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age", u0."verified" FROM "users" AS u0 WHERE (u0."age" = $1) AND (u0."name" = $2)}, [36, "Brian"]}
+    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age" FROM "users" AS u0 WHERE (u0."age" = $1) AND (u0."name" = $2)}, [36, "Brian"]}
   end
 
   test "can use custom composable query" do
     q = Basic.build_query(User, %{"order_by" => "name"})
-    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age", u0."verified" FROM "users" AS u0 ORDER BY u0."name"}, []}
+    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age" FROM "users" AS u0 ORDER BY u0."name"}, []}
   end
 
   test "defquery can take guards" do
     q = Basic.build_query(User, %{"age" => "20"})
-    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age", u0."verified" FROM "users" AS u0 WHERE (u0."age" = 44)}, []}
+    assert to_sql(q) == {~s{SELECT u0."id", u0."name", u0."age" FROM "users" AS u0 WHERE (u0."age" = 44)}, []}
   end
 end
