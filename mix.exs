@@ -7,6 +7,7 @@ defmodule Inquisitor.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     elixirc_paths: elixirc_paths(Mix.env),
      description: description(),
      package: package(),
      deps: deps(),
@@ -21,6 +22,9 @@ defmodule Inquisitor.Mixfile do
   def application do
     [applications: [:logger, :ecto]]
   end
+
+  defp elixirc_paths(:test), do: elixirc_paths(:dev) |> Enum.concat(["test/support"])
+  defp elixirc_paths(_), do: ["lib"]
 
   def description do
     """
