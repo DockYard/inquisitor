@@ -88,7 +88,7 @@ the date example, let's say we want to find all posts inserted for a
 given month and year:
 
 ```elixir
-defquery attr, value when attr == "month" or atr == "year" do
+defquery attr, value when attr == "month" or attr == "year" do
   query
   |> Ecto.Query.where([e], fragment("date_part(?, ?) = ?", ^attr, e.inserted_at, type(^value, :integer)))
 end
