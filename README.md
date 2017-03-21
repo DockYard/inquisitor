@@ -15,7 +15,7 @@ defmodule MyApp.PostController do
   def index(conn, params) do
     posts =
       App.Post
-      |> build_query(params)
+      |> build_query(conn, params)
       |> Repo.all()
 
     json(conn, posts)
@@ -23,13 +23,13 @@ defmodule MyApp.PostController do
 end
 ```
 
-After `use Inquisitor` a `build_query/2` is added to
-the `MyApp.PostController`. It takes a queryable variable and the
-params as arguments.
+After `use Inquisitor` `build_query/3` is added to
+the `MyApp.PostController`. It takes a queryable variable, the
+`conn`, and the `params` as arguments.
 
 This sets up a key/value queryable API for the `Post` model. Any
 combination of fields on the model can be queried against. For example,
-requesting `[GET] /posts?foo=bar&baz=qux` will create the query:
+requesting `[GET] /posts?foo=bar&baz=qux` could create the query:
 
 ```sql
 SELECT p0."foo", p0."baz" FROM posts as p0 WHERE (p0."foo" = $1) AND (p0."baz" = $1);
@@ -49,17 +49,31 @@ If you'd like to add a catch-all for any key/value pair you can override
 the default:
 
 ```elixir
-defquery key, value do
+def build_query(query, key, value, _conn) do
   query
   |> Ecto.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
 end
 ```
 
-However, this is not recommended.
+However, this is not recommended. Instead you should create a
+`@whitelist` modulue attribute that contains all of they keys you
+allowing access to:
+
+```elixir
+@whitelist ["title", "bio"]
+
+def build_query(query, key, value, _conn) when key in @whitelist do
+  query
+  |> Ecto.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
+end
+```
+
+This will handle matching keys in the whitelist and all unmatched keys
+will fallback to the pass-through without affecting the query.
 
 ### Adding custom query handlers
 
-You can use the `defquery` macro to create custom query handlers:
+Use `build_query/4` to add key/value pair handlers:
 
 ```elixir
 defmodule MyApp.PostsController do
@@ -74,7 +88,7 @@ defmodule MyApp.PostsController do
     json(conn, posts)
   end
 
-  defquery "inserted_at", date do
+  def build_query(query, "inserted_at", date, _conn) do
     query
     |> Ecto.Query.where([p], p.inserted_at >= ^date)
   end
@@ -88,14 +102,11 @@ the date example, let's say we want to find all posts inserted for a
 given month and year:
 
 ```elixir
-defquery attr, value when attr == "month" or attr == "year" do
+def build_query(query, attr, value, _conn) when attr == "month" or attr == "year" do
   query
   |> Ecto.Query.where([e], fragment("date_part(?, ?) = ?", ^attr, e.inserted_at, type(^value, :integer)))
 end
 ```
-
-`defquery` can use guards, this should help you easily build solutions
-for complex queries.
 
 ### Usage Outside of Phoenix Controllers
 
