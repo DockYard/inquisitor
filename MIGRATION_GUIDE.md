@@ -1,6 +1,39 @@
 # Migration Guide
 
-## From 0.2.0
+## From 0.3.0 to 0.4.0
+
+If you are using `< 0.3.0` please follow the `0.2.0 to 0.3.0` migration
+guide below then use the `0.3.0 to 0.4.0` guide.
+
+0.4.0 dropped the macro in favor of pure functions. It also no requires
+the `conn` object be passed into query builder.
+
+#### Changing your code
+
+**Calling the builder**
+
+```diff
+def index(conn, params) do
+  posts =
+    App.Post
+-   |> build_query(params)
++   |> build_query(conn, params)
+    |> Repo.all()
+```
+
+**Custom key/value handlers**
+
+```diff
+-defquery "title", title do
++def build_query(query, "title", title, _conn) do
+  query
+  |> Ecto.Query.where([r], r.title == ^title)
+end
+```
+
+That should be it!
+
+## From 0.2.0 to 0.3.0
 
 From 0.3.0 on Inquisitor took the role of being an unopinionated
 primitive to be built upon and does not include any out of the box query
