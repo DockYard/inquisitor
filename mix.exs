@@ -20,7 +20,7 @@ defmodule Inquisitor.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :ecto, :plug]]
+    [applications: [:logger, :plug]]
   end
 
   defp elixirc_paths(:test), do: elixirc_paths(:dev) |> Enum.concat(["test/support"])

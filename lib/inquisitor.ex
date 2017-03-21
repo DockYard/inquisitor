@@ -43,18 +43,18 @@ defmodule Inquisitor do
   """
   defmacro __using__(_opts) do
     quote do
-      @before_compile Inquisitor
-    end
-  end
-
-  defmacro __before_compile__(_env) do
-    quote do
       def build_query(query, %Plug.Conn{} = conn, params) do
         Enum.reduce(params, query, fn({key, value}, query) ->
           build_query(query, key, value, conn)
         end)
       end
 
+      @before_compile Inquisitor
+    end
+  end
+
+  defmacro __before_compile__(_env) do
+    quote do
       def build_query(query, _key, _value, %Plug.Conn{} = _conn), do: query
       defoverridable [build_query: 4]
     end
