@@ -49,7 +49,7 @@ If you'd like to add a catch-all for any key/value pair you can override
 the default:
 
 ```elixir
-def build_query(query, key, value, _conn) do
+def build_query(query, attr, value, _conn) do
   query
   |> Ecto.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
 end
@@ -62,7 +62,7 @@ allowing access to:
 ```elixir
 @whitelist ["title", "bio"]
 
-def build_query(query, key, value, _conn) when key in @whitelist do
+def build_query(query, attr, value, _conn) when attr in @whitelist do
   query
   |> Ecto.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
 end
