@@ -50,8 +50,7 @@ the default:
 
 ```elixir
 def build_query(query, attr, value, _conn) do
-  query
-  |> Ecto.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
+  Ecto.where(query, [r], field(r, ^String.to_existing_atom(attr)) == ^value)
 end
 ```
 
@@ -63,8 +62,7 @@ allowing access to:
 @whitelist ["title", "bio"]
 
 def build_query(query, attr, value, _conn) when attr in @whitelist do
-  query
-  |> Ecto.where([r], field(r, ^String.to_existing_atom(attr)) == ^value)
+  Ecto.where(query, [r], field(r, ^String.to_existing_atom(attr)) == ^value)
 end
 ```
 
@@ -89,8 +87,7 @@ defmodule MyApp.PostsController do
   end
 
   def build_query(query, "inserted_at", date, _conn) do
-    query
-    |> Ecto.Query.where([p], p.inserted_at >= ^date)
+    Ecto.Query.where(query, [p], p.inserted_at >= ^date)
   end
 end
 ```
@@ -103,8 +100,7 @@ given month and year:
 
 ```elixir
 def build_query(query, attr, value, _conn) when attr == "month" or attr == "year" do
-  query
-  |> Ecto.Query.where([e], fragment("date_part(?, ?) = ?", ^attr, e.inserted_at, type(^value, :integer)))
+  Ecto.Query.where(query, [e], fragment("date_part(?, ?) = ?", ^attr, e.inserted_at, type(^value, :integer)))
 end
 ```
 
