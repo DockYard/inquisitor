@@ -121,6 +121,12 @@ defmodule MyApp.PlainModule do
 end
 ```
 
+### Plugins
+
+We collect all Inquisitor plugins that extend its behavior:
+
+* [inquisitor\_jsonapi](https://github.com/dockyard/inquisitor_jsonapi) - implements query handling according to the JSON API spec
+
 ## Authors
 
 * [Brian Cardarella](http://twitter.com/bcardarella)
