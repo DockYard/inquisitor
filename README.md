@@ -50,7 +50,7 @@ the default:
 
 ```elixir
 def build_query(query, attr, value, _conn) do
-  Ecto.where(query, [r], field(r, ^String.to_existing_atom(attr)) == ^value)
+  Ecto.Query.where(query, [r], field(r, ^String.to_existing_atom(attr)) == ^value)
 end
 ```
 
@@ -62,7 +62,7 @@ allowing access to:
 @whitelist ["title", "bio"]
 
 def build_query(query, attr, value, _conn) when attr in @whitelist do
-  Ecto.where(query, [r], field(r, ^String.to_existing_atom(attr)) == ^value)
+  Ecto.Query.where(query, [r], field(r, ^String.to_existing_atom(attr)) == ^value)
 end
 ```
 
