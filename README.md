@@ -1,8 +1,8 @@
-# Inquisitor
+# Inquisitor [![Build Status](https://secure.travis-ci.org/DockYard/inquisitor.svg?branch=master)](http://travis-ci.org/DockYard/inquisitor)
 
 Easily build composable queries for Ecto.
 
-[![Build Status](https://secure.travis-ci.org/DockYard/inquisitor.svg?branch=master)](http://travis-ci.org/DockYard/inquisitor)
+**[Inquisitor is built and maintained by DockYard, contact us for expert Elixir and Phoenix consulting](https://dockyard.com/phoenix-consulting)**.
 
 ## Usage
 
