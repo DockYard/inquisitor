@@ -39,7 +39,7 @@ SELECT p0."foo", p0."baz" FROM posts as p0 WHERE (p0."foo" = $1) AND (p0."baz" =
 
 ### Security
 
-By default Inquisitor is an opt-in library. It will not provide any
+By default, Inquisitor is an opt-in library. It will not provide any
 querying access to any key/value pair. The params list will be iterated
 over and a no-op function is called on each element. You must add custom
 query handlers that have a higher matching order on a case by case
@@ -94,7 +94,7 @@ end
 
 ### Handing fields that don't exist on the model
 
-The keys you query against don't need to exist on the model. Revisting
+The keys you query against don't need to exist on the model. Revisiting
 the date example, let's say we want to find all posts inserted for a
 given month and year:
 
