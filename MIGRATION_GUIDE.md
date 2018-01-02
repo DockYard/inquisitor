@@ -5,7 +5,7 @@
 If you are using `< 0.3.0` please follow the `0.2.0 to 0.3.0` migration
 guide below then use the `0.3.0 to 0.4.0` guide.
 
-0.4.0 dropped the macro in favor of pure functions. It also no requires
+0.4.0 dropped the macro in favor of pure functions. It also now requires
 the `conn` object be passed into query builder.
 
 #### Changing your code
@@ -91,7 +91,7 @@ end, this is do for you. Just ensure the result is the query.
 ### Other changes
 
 * boolean preprocessing is gone, so you must match on `"true"` and `"false"` instead of `true` and `false`
-* the `limit` matcher is gone, you should jsut write your own
+* the `limit` matcher is gone, you should just write your own
 * the default key/value matcher is gone. If you want this functionality back you should add it, but be aware that it will opt-in for every key. If you'd like to ensure some security you can use a guard with `defquery/2`
 
 ```elixir

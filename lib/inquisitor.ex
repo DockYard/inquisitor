@@ -30,7 +30,7 @@ defmodule Inquisitor do
 
   ## Writing custom query handlers
 
-  Custom query handlers are written using `build_query/4`. They accumulatd
+  Custom query handlers are written using `build_query/4`. The accumulator
   query is the first argument. The key/value pairs
   extracted from the params become the 2nd and 3rd argument. The `context` is the last argument.
 
