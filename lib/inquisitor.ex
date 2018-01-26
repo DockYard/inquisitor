@@ -40,22 +40,26 @@ defmodule Inquisitor do
         Ecto.Query.where(query, [r], r.title == ^title)
       end
 
+  See `Inquisitor.QueryBuilder` for more documentation.
+
   """
   defmacro __using__(_opts) do
     quote do
-      def build_query(query, context, params) do
+      @behaviour Inquisitor.QueryBuilder
+
+      @doc """
+      Builds an Ecto Query.
+      """
+      @spec build_query(Ecto.Queryable.t(), any(), map()) :: Ecto.Query.t()
+      def build_query(queryable, context, params) do
+        query = Ecto.Queryable.to_query(queryable)
         Enum.reduce(params, query, fn({key, value}, query) ->
           build_query(query, key, value, context)
         end)
       end
 
-      @before_compile Inquisitor
-    end
-  end
+      def build_query(%Ecto.Query{} = query, _key, _value, _context), do: query
 
-  defmacro __before_compile__(_env) do
-    quote do
-      def build_query(query, _key, _value, _context), do: query
       defoverridable [build_query: 4]
     end
   end
