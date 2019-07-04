@@ -20,7 +20,7 @@ defmodule Inquisitor.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :plug]]
+    [applications: [:logger]]
   end
 
   defp elixirc_paths(:test), do: elixirc_paths(:dev) |> Enum.concat(["test/support"])
@@ -50,7 +50,6 @@ defmodule Inquisitor.Mixfile do
   defp deps do
     [
       {:ecto, "> 2.0.0"},
-      {:plug, "~> 1.3.0", only: :test},
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:postgrex, "> 0.0.0", only: :test}
