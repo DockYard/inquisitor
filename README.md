@@ -55,8 +55,8 @@ end
 ```
 
 However, this is not recommended. Instead you should create a
-`@whitelist` modulue attribute that contains all of they keys you
-allowing access to:
+`@whitelist` module attribute that contains all of they keys you
+wish to allow access to:
 
 ```elixir
 @whitelist ["title", "bio"]
@@ -67,7 +67,7 @@ end
 ```
 
 This will handle matching keys in the whitelist and all unmatched keys
-will fallback to the pass-through without affecting the query.
+will fall back to the pass-through without affecting the query.
 
 ### Adding custom query handlers
 
@@ -127,7 +127,7 @@ We collect all Inquisitor plugins that extend its behavior:
 
 * [Brian Cardarella](http://twitter.com/bcardarella)
 
-[We are very thankful for the many contributors](https://github.com/dockyard/inquisitor/graphs/contributors)
+[We are very thankful for the many contributors](https://github.com/dockyard/inquisitor/graphs/contributors).
 
 ## Versioning
 
